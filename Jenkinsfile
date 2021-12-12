@@ -1,6 +1,10 @@
 pipeline {
   agent any
   
+  environment {
+	  DISCORD_WEBHOOK_URL = credentials('discord-webhook')
+  }
+  
   stages {
     stage('git clone') {
       steps {
@@ -15,7 +19,7 @@ pipeline {
         footer: "Result - ${currentBuild.currentResult}",
         result: currentBuild.currentResult,
         title: 'Configaro',
-        webhookURL: 'discord-webhook'
+        webhookURL: DISCORD_WEBHOOK_URL
     }
   }
 }

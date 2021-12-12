@@ -11,7 +11,11 @@ pipeline {
   
   post {
     always {
-      
+      discordSend description: "**Build** #${currentBuild.number}\n**Changes:** ${currentBuild.changeSets}",
+        footer: "Result - ${currentBuild.currentResult}",
+        result: currentBuild.currentResult,
+        title: 'Configaro',
+        webhookURL: ''
     }
   }
 }

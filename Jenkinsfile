@@ -11,6 +11,12 @@ pipeline {
         git branch: 'develop', credentialsId: 'github-magikabdul', url: 'git@github.com:magikabdul/configaro.git'
       }
     }
+	  
+	  stage ('mvn clean'){
+			steps {
+				sh 'mvn clean'
+			}
+	  }  
   }
   
   post {

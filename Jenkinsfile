@@ -15,7 +15,7 @@ pipeline {
         footer: "Result - ${currentBuild.currentResult}",
         result: currentBuild.currentResult,
         title: 'Configaro',
-        webhookURL: ''
+        webhookURL: 'discord-webhook'
     }
   }
 }

@@ -29,6 +29,7 @@
     "rules": {
         "react/jsx-filename-extension": [1, { "extensions": [".js"] }],
         "react/function-component-definition": [0, {"arrow-function": 0}],
+        "react/jsx-props-no-spreading": [2, {"custom":  "ignore"}],
         "prettier/prettier": "error"
     }
 }

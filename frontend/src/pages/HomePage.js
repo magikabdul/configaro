@@ -3,31 +3,29 @@ import styled from 'styled-components';
 import Typography from 'components/atoms/Typography/Typography';
 import theme from 'theme/theme';
 import { Link } from 'react-router-dom';
+import backgroundImage from 'assets/images/conference-room.jpg';
+import Box from 'components/atoms/Box/Box';
+import Button from 'components/atoms/Button/Button';
 
 const Container = styled.div`
+  position: relative;
   margin: 100px auto;
-  width: 70%;
+  height: 70%;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`;
 
-const Box = styled.div`
-  margin: ${({ m }) => m && `${m}px ${m}px`};
-  margin-left: ${({ mx }) => mx && `${mx}px`};
-  margin-right: ${({ mx }) => mx && `${mx}px`};
-  margin-top: ${({ my }) => my && `${my}px`};
-  margin-bottom: ${({ my }) => my && `${my}px`};
-
-  padding: ${({ p }) => p && `${p}px ${p}px`};
-  padding-left: ${({ px }) => px && `${px}px`};
-  padding-right: ${({ px }) => px && `${px}px`};
-  padding-top: ${({ py }) => py && `${py}px`};
-  padding-bottom: ${({ py }) => py && `${py}px`};
-
-  flex: ${({ flex }) => flex && `${flex}`};
+  &:before {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: url(${backgroundImage}) center/cover no-repeat;
+    filter: brightness(60%);
+  }
 `;
 
 const HomePage = () => {
@@ -40,32 +38,46 @@ const HomePage = () => {
   }, []);
 
   return (
-    <Container>
-      <Typography variant='h1' size='80px' align='center' upperCase>
-        configaro
-      </Typography>
-      <Typography align='center'>
-        Ogólnie znana teza głosi, iż użytkownika może rozpraszać zrozumiała zawartość strony, kiedy
-        ten chce zobaczyć sam jej wygląd. Jedną z mocnych stron używania Lorem Ipsum jest to, że ma
-        wiele różnych „kombinacji” zdań, słów i akapitów, w przeciwieństwie do zwykłego: „tekst,
-        tekst, tekst”, sprawiającego, że wygląda to „zbyt czytelnie” po polsku. Wielu webmasterów i
-        designerów używa Lorem Ipsum jako domyślnego modelu tekstu i wpisanie w internetowej
-        wyszukiwarce ‘lorem ipsum’ spowoduje znalezienie bardzo wielu stron, które wciąż są w
-        budowie. Wiele wersji tekstu ewoluowało i zmieniało się przez lata, czasem przez przypadek,
-        czasem specjalnie (humorystyczne wstawki itd).
-      </Typography>
-      <Link to='/login'>
-        <button
-          type='button'
-          style={{ margin: '50px', width: '200px', padding: '20px 10px', cursors: 'pointer' }}
-        >
-          logowanie
-        </button>
-      </Link>
-      <Box m='100'>
-        <p style={{ color: theme.colors.danger }}>{message}</p>
+    <>
+      <Container>
+        <Box mx={200} style={{ position: 'relative' }}>
+          <Typography
+            style={{ position: 'relative' }}
+            variant='h1'
+            size='80px'
+            align='center'
+            upperCase
+          >
+            configaro
+          </Typography>
+
+          <Typography align='center'>
+            Ut lobortis, tortor at blandit bibendum, dolor dolor elementum lorem, vel cursus tellus
+            arcu ut nulla. Suspendisse ipsum lectus, finibus eget elementum sed, imperdiet eget
+            sapien. Aenean pretium felis in tempor vehicula. In vitae faucibus nunc. Vestibulum
+            efficitur consequat interdum. Class aptent taciti sociosqu ad litora torquent per
+            conubia nostra, per inceptos himenaeos. Sed quis congue velit. Praesent a arcu sapien.
+            Nulla pharetra lacinia sapien, non accumsan diam egestas ac. Integer vitae turpis sit
+            amet mi sodales accumsan. Nullam mattis dolor in urna sagittis elementum. Curabitur
+            risus ante, imperdiet at risus quis, vehicula placerat tellus. Nullam eu nibh rhoncus,
+            gravida est non, convallis elit. Vivamus faucibus elementum sapien, id egestas nibh
+            finibus eget. Donec dapibus dictum sollicitudin. Aenean eu sem viverra, laoreet sem id,
+            fermentum urna.
+          </Typography>
+        </Box>
+      </Container>
+
+      <Box mt={50} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Link to='/login'>
+          <Button align='center' color='info'>
+            logowanie
+          </Button>
+        </Link>
       </Box>
-    </Container>
+      <Box mt={10} style={{ display: 'flex', justifyContent: 'center' }}>
+        <p style={{ color: theme.colors.success }}>{message}</p>
+      </Box>
+    </>
   );
 };
 

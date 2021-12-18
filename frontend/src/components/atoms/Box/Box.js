@@ -35,8 +35,10 @@ const Box = ({
   px,
   py,
   p,
+  ...props
 }) => (
   <Container
+    {...props}
     backgroundColor={backgroundColor}
     flex={flex}
     mt={mt}

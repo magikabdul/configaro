@@ -2,52 +2,73 @@ import React from 'react';
 import styled from 'styled-components';
 import Typography from 'components/atoms/Typography/Typography';
 import { Link } from 'react-router-dom';
+import loginFormBackground from 'assets/images/server-room.jpg';
+import Box from 'components/atoms/Box/Box';
+import InputField from 'components/atoms/InputField/InputField';
+import Button from 'components/atoms/Button/Button';
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+`;
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-
-  margin: 200px auto;
-  width: 50%;
-  height: 50%;
+  grid-template-columns: 40% 60%;
+  width: 70%;
+  height: 80%;
 
   border-radius: 10px;
   overflow: hidden;
 `;
 
-const Box = styled.div`
+const Section = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
 `;
 
-const LeftBox = styled(Box)`
-  background-color: #7f0303;
+const LeftSection = styled(Section)`
+  background-color: ${({ theme }) => theme.colors.primary};
+  height: 100%;
+  padding: 100px 50px 0;
 `;
 
-const RightBox = styled(Box)`
-  background-color: white;
+const RightSection = styled(Section)`
+  background: url(${loginFormBackground}) center/cover no-repeat;
 `;
 
 const LoginPage = () => (
-  <Container>
-    <LeftBox>
-      <Typography variant='h1' align='center' size='30px' upperCase>
-        configaro
-      </Typography>
-    </LeftBox>
-    <RightBox>
-      <Link to='/'>
-        <button
-          type='button'
-          style={{ margin: '50px', width: '200px', padding: '20px 10px', cursors: 'pointer' }}
-        >
-          zaloguj
-        </button>
-      </Link>
-    </RightBox>
-  </Container>
+  <Wrapper>
+    <Container>
+      <LeftSection>
+        <Typography variant='h1' align='center' size='40px' upperCase color='blue'>
+          configaro
+        </Typography>
+        <Box mt={50}>
+          <Typography variant='h1' align='left' size='25px' color='black' upperCase>
+            Zaloguj się
+          </Typography>
+          <Typography align='left' size='14px' color='gray'>
+            Podaj login i hasło
+          </Typography>
+        </Box>
+
+        <Box mt={20}>
+          <InputField id='login' type='text' label='Login' placeholder='Podaj login/email' />
+          <InputField id='password' type='password' label='Hasło' placeholder='Podaj hasło' />
+          <Link to='/dashboard'>
+            <Button variant='contained' color='info' fullWidth>
+              zaloguj się
+            </Button>
+          </Link>
+        </Box>
+      </LeftSection>
+      <RightSection />
+    </Container>
+  </Wrapper>
 );
 
 export default LoginPage;

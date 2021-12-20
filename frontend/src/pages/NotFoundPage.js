@@ -4,15 +4,22 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import Button from 'components/atoms/Button/Button';
 import Box from 'components/atoms/Box/Box';
+import backgroundImage from 'assets/images/laptop-view.jpg';
 
 const Container = styled.div`
-  width: 100%;
-  height: 100%;
+  height: 100vh;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  &::before {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url(${backgroundImage});
+  }
 `;
 
 const NotFoundPage = () => (

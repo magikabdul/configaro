@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
 
-  height: 100%;
+  height: 100vh;
 `;
 
 const Container = styled.div`

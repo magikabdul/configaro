@@ -8,6 +8,7 @@ const theme = {
     warning: '#F5B700',
     success: '#36D937',
     inactive: '#A7AEB6',
+    paper: '#2B2C30',
   },
 };
 

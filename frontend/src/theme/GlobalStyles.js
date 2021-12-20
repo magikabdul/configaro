@@ -17,6 +17,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Roboto', sans-serif;
     color: #fefefe;
     background: url(${backgroundImage}) no-repeat center/cover;
+    min-height: 100vh;
   }
 
   img, picture, video, canvas, svg {

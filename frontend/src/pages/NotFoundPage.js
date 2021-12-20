@@ -2,10 +2,12 @@ import React from 'react';
 import Typography from 'components/atoms/Typography/Typography';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import Button from 'components/atoms/Button/Button';
+import Box from 'components/atoms/Box/Box';
 
 const Container = styled.div`
-  margin: 100px auto;
-  width: 70%;
+  width: 100%;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
@@ -22,12 +24,9 @@ const NotFoundPage = () => (
       strona nie została znaleziona
     </Typography>
     <Link to='/'>
-      <button
-        type='button'
-        style={{ margin: '50px', width: '200px', padding: '20px 10px', cursors: 'pointer' }}
-      >
-        Storna główna
-      </button>
+      <Box mt={50}>
+        <Button>strona główna</Button>
+      </Box>
     </Link>
   </Container>
 );

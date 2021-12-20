@@ -7,7 +7,7 @@ const theme = {
     error: '#E12C52',
     warning: '#F5B700',
     success: '#36D937',
-    inactive: '#888',
+    inactive: '#A7AEB6',
   },
 };
 

@@ -11,7 +11,8 @@ const Container = styled.div`
 const Label = styled.label`
   font-size: 14px;
   font-weight: bold;
-  margin: 0 0 8px 8px;
+  margin-bottom: 2px;
+  color: ${({ theme }) => theme.colors.inactive};
 `;
 
 const Input = styled.input`
@@ -31,7 +32,7 @@ const Input = styled.input`
 const Error = styled.p`
   font-size: 14px;
   font-weight: bold;
-  margin: 8px 0 0 8px;
+  margin: 2px 0 0 0;
   color: ${({ theme }) => theme.colors.error};
 `;
 

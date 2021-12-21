@@ -31,17 +31,19 @@ const Title = styled.div`
   font-size: 12px;
 `;
 
-const MenuItem = ({ icon, title, open, selected, ...props }) => {
+const MenuItem = ({ Icon, title, open, selected, ...props }) => {
   return (
     <Container selected={selected} open={open} {...props}>
-      <IconBox open={open}>{icon}</IconBox>
+      <IconBox open={open}>
+        <Icon style={{ width: '20', height: '20' }} />
+      </IconBox>
       {open && <Title>{title}</Title>}
     </Container>
   );
 };
 
 MenuItem.propTypes = {
-  icon: PropTypes.element.isRequired,
+  Icon: PropTypes.element.isRequired,
   open: PropTypes.bool,
   selected: PropTypes.bool,
   title: PropTypes.string.isRequired,

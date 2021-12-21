@@ -7,7 +7,7 @@ export default {
   title: 'Molecules/MenuItem',
   component: MenuItem,
   argTypes: {
-    icon: {
+    Icon: {
       control: false,
     },
   },
@@ -41,7 +41,7 @@ export const ItemWide = TemplateWide.bind({});
 
 ItemWide.args = {
   title: 'dashboard',
-  icon: <AiOutlineDashboard style={{ height: 20, width: 20 }} />,
+  Icon: AiOutlineDashboard,
   open: true,
   selected: false,
 };
@@ -50,7 +50,7 @@ export const ItemNarrow = TemplateNarrow.bind({});
 
 ItemNarrow.args = {
   title: 'dashboard',
-  icon: <AiOutlineDashboard style={{ height: 20, width: 20 }} />,
+  Icon: AiOutlineDashboard,
   open: false,
   selected: false,
 };

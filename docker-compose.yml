@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  configaro_backend:
+    image: configaro:latest
+    build:
+      context: ./backend
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    network_mode: nginx-proxy_default
+    restart: unless-stopped

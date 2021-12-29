@@ -1,6 +1,7 @@
 version: '3.7'
 services:
   configaro_backend:
+    container_name: configaro_backend
     image: configaro:latest
     build:
       context: ./backend

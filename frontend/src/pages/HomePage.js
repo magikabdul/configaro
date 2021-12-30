@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import backgroundImage from 'assets/images/conference-room.jpg';
 import Box from 'components/atoms/Box/Box';
 import Button from 'components/atoms/Button/Button';
+import { API_URL } from 'utils/config';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -31,7 +32,7 @@ const HomePage = () => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/api/v1/health')
+    fetch(`${API_URL}/api/v1/health`)
       .then((r) => r.text())
       .then((m) => setMessage(m));
   }, []);

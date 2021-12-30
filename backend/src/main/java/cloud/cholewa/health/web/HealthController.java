@@ -10,7 +10,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/health")
-@CrossOrigin
+@CrossOrigin("*")
 public class HealthController {
 
     @GetMapping

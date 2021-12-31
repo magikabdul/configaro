@@ -16,7 +16,7 @@ const Root = () => {
           <Route path='/' exact element={<HomePage />} />
           <Route path='/login' exact element={<LoginPage />} />
           <Route path='*' element={<NotFoundPage />} />
-          <Route to='dashboard' />
+          {/* <Route to='dashboard' /> */}
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

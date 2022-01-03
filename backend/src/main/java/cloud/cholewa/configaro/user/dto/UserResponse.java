@@ -1,4 +1,4 @@
-package cloud.cholewa.user.dto;
+package cloud.cholewa.configaro.user.dto;
 
 public record UserResponse(
         Long id,

@@ -1,4 +1,4 @@
-package cloud.cholewa.user.model;
+package cloud.cholewa.configaro.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

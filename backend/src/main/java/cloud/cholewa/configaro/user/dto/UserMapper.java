@@ -1,6 +1,6 @@
-package cloud.cholewa.user.dto;
+package cloud.cholewa.configaro.user.dto;
 
-import cloud.cholewa.user.model.UserEntity;
+import cloud.cholewa.configaro.user.model.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component

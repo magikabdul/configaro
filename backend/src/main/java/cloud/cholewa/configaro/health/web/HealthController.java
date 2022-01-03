@@ -1,4 +1,4 @@
-package cloud.cholewa.health.web;
+package cloud.cholewa.configaro.health.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

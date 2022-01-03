@@ -1,8 +1,8 @@
-package cloud.cholewa.user.controller;
+package cloud.cholewa.configaro.user.controller;
 
-import cloud.cholewa.user.dto.UserRequest;
-import cloud.cholewa.user.dto.UserResponse;
-import cloud.cholewa.user.service.UserService;
+import cloud.cholewa.configaro.user.dto.UserRequest;
+import cloud.cholewa.configaro.user.dto.UserResponse;
+import cloud.cholewa.configaro.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

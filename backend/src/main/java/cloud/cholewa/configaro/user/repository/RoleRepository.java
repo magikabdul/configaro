@@ -1,6 +1,6 @@
-package cloud.cholewa.user.repository;
+package cloud.cholewa.configaro.user.repository;
 
-import cloud.cholewa.user.model.RoleEntity;
+import cloud.cholewa.configaro.user.model.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

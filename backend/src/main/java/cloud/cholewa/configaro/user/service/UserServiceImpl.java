@@ -1,12 +1,14 @@
-package cloud.cholewa.user.service;
+package cloud.cholewa.configaro.user.service;
 
-import cloud.cholewa.user.dto.UserMapper;
-import cloud.cholewa.user.dto.UserRequest;
-import cloud.cholewa.user.dto.UserResponse;
-import cloud.cholewa.user.model.RoleEntity;
-import cloud.cholewa.user.model.UserEntity;
-import cloud.cholewa.user.repository.RoleRepository;
-import cloud.cholewa.user.repository.UserRepository;
+import cloud.cholewa.configaro.exception.UserException;
+import cloud.cholewa.configaro.exception.common.ErrorDict;
+import cloud.cholewa.configaro.user.dto.UserMapper;
+import cloud.cholewa.configaro.user.dto.UserRequest;
+import cloud.cholewa.configaro.user.model.RoleEntity;
+import cloud.cholewa.configaro.user.repository.RoleRepository;
+import cloud.cholewa.configaro.user.repository.UserRepository;
+import cloud.cholewa.configaro.user.dto.UserResponse;
+import cloud.cholewa.configaro.user.model.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,15 +36,17 @@ class UserServiceImpl implements UserService {
             UserEntity userEntity = userRepository.save(newUserEntity);
             return userMapper.mapToUserResponse(userEntity);
         }
-        throw new IllegalArgumentException("mail exist");
+        throw new UserException(ErrorDict.USER_EMAIL_EXISTS);
     }
 
     private RoleEntity setUserRole(UserRequest userRequest) {
         Optional<RoleEntity> role = roleRepository.findRoleByName(userRequest.role());
 
         if (userRequest.role() == null || role.isEmpty()) {
-            return roleRepository.findRoleByName("user").orElseThrow(() -> new IllegalArgumentException("role does not exists"));
+            return roleRepository.findRoleByName("user")
+                    .orElseThrow(() -> new UserException(ErrorDict.USER_ROLE_INVALID));
         }
-        return roleRepository.findRoleByName("admin").orElseThrow(() -> new IllegalArgumentException("role does not exists"));
+        return roleRepository.findRoleByName("admin")
+                .orElseThrow(() -> new UserException(ErrorDict.USER_ROLE_INVALID));
     }
 }

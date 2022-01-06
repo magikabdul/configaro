@@ -26,9 +26,9 @@ public class UserController {
         return ResponseEntity.created(
                 ServletUriComponentsBuilder
                         .fromCurrentRequestUri()
-                        .path("/" + userResponse.id())
+                        .path("/" + userResponse.getId())
                         .build()
-                        .toUri())
-                .build();
+                        .toUri()).body(userResponse);
+//                .build();
     }
 }

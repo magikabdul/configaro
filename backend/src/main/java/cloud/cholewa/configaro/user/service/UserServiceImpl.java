@@ -4,15 +4,13 @@ import cloud.cholewa.configaro.exception.UserException;
 import cloud.cholewa.configaro.exception.common.ErrorDict;
 import cloud.cholewa.configaro.user.dto.UserMapper;
 import cloud.cholewa.configaro.user.dto.UserRequest;
+import cloud.cholewa.configaro.user.dto.UserResponse;
 import cloud.cholewa.configaro.user.model.RoleEntity;
+import cloud.cholewa.configaro.user.model.UserEntity;
 import cloud.cholewa.configaro.user.repository.RoleRepository;
 import cloud.cholewa.configaro.user.repository.UserRepository;
-import cloud.cholewa.configaro.user.dto.UserResponse;
-import cloud.cholewa.configaro.user.model.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,20 +31,21 @@ class UserServiceImpl implements UserService {
                     .roleEntity(setUserRole(userRequest))
                     .build();
 
-            UserEntity userEntity = userRepository.save(newUserEntity);
-            return userMapper.mapToUserResponse(userEntity);
+            return userMapper.convertToUserResponse(userRepository.save(newUserEntity));
         }
         throw new UserException(ErrorDict.USER_EMAIL_EXISTS);
     }
 
     private RoleEntity setUserRole(UserRequest userRequest) {
-        Optional<RoleEntity> role = roleRepository.findRoleByName(userRequest.role());
-
-        if (userRequest.role() == null || role.isEmpty()) {
+        if (userRequest.role() == null) {
             return roleRepository.findRoleByName("user")
                     .orElseThrow(() -> new UserException(ErrorDict.USER_ROLE_INVALID));
+        } else if (userRequest.role().equalsIgnoreCase("admin")) {
+            return roleRepository.findRoleByName("admin")
+                    .orElseThrow(() -> new UserException(ErrorDict.USER_ROLE_INVALID));
         }
-        return roleRepository.findRoleByName("admin")
+
+        return roleRepository.findRoleByName("user")
                 .orElseThrow(() -> new UserException(ErrorDict.USER_ROLE_INVALID));
     }
 }

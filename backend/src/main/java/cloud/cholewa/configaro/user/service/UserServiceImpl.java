@@ -31,16 +31,16 @@ class UserServiceImpl implements UserService {
                     .roleEntity(setUserRole(userRequest))
                     .build();
 
-            UserEntity ue = userRepository.save(newUserEntity);
-
-            return userMapper.convertToUserResponse(ue);
+            return userMapper.convertToUserResponse(userRepository.save(newUserEntity));
         }
         throw new UserException(ErrorDict.USER_EMAIL_EXISTS);
     }
 
     private RoleEntity setUserRole(UserRequest userRequest) {
-
-        if (userRequest.role().equalsIgnoreCase("admin")) {
+        if (userRequest.role() == null) {
+            return roleRepository.findRoleByName("user")
+                    .orElseThrow(() -> new UserException(ErrorDict.USER_ROLE_INVALID));
+        } else if (userRequest.role().equalsIgnoreCase("admin")) {
             return roleRepository.findRoleByName("admin")
                     .orElseThrow(() -> new UserException(ErrorDict.USER_ROLE_INVALID));
         }

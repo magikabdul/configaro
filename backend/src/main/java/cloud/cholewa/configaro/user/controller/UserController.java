@@ -28,7 +28,7 @@ public class UserController {
                         .fromCurrentRequestUri()
                         .path("/" + userResponse.getId())
                         .build()
-                        .toUri())
-                .build();
+                        .toUri()).body(userResponse);
+//                .build();
     }
 }

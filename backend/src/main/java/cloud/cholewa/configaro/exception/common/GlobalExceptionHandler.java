@@ -39,6 +39,12 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(getSource(request), List.of(e.getMessage()));
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e, HttpServletRequest request) {
+        return new ErrorResponse(getSource(request), List.of(e.getMessage()));
+    }
+
     private String getSource(HttpServletRequest request) {
         String DEFAULT_SOURCE_ERROR_MESSAGE = "Unknown source";
 

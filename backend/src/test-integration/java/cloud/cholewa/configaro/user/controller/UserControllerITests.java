@@ -4,6 +4,8 @@ import cloud.cholewa.configaro.BaseIntegrationTest;
 import cloud.cholewa.configaro.exception.common.ErrorDict;
 import cloud.cholewa.configaro.exception.common.ErrorResponse;
 import cloud.cholewa.configaro.user.dto.UserRequest;
+import cloud.cholewa.configaro.user.dto.UserResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -15,8 +17,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -272,7 +277,8 @@ public class UserControllerITests extends BaseIntegrationTest {
                 .andReturn();
 
         assertTrue(mvcResult.getResponse().getHeaders("Location").get(0).contains("/users/"));
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("\"role\":\"user\""));    }
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("\"role\":\"user\""));
+    }
 
     @Test
     @SneakyThrows
@@ -288,5 +294,96 @@ public class UserControllerITests extends BaseIntegrationTest {
 
         assertTrue(mvcResult.getResponse().getHeaders("Location").get(0).contains("/users/"));
         assertTrue(mvcResult.getResponse().getContentAsString().contains("\"role\":\"admin\""));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseOkWhenGetAllUsers() {
+        MvcResult mvcResult = mvc.perform(get("/users"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<UserResponse> users = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+
+        assertThat(users)
+                .isNotEmpty()
+                .map(UserResponse::getRole).allMatch(role -> role.equals("admin") || role.equals("user"))
+                .hasSizeGreaterThanOrEqualTo(20);
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseNotFoundWhenGetUsersByRoleWhichNotExists() {
+        mvc.perform(get("/users)").param("role", "test"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseOkWhenGetUsersByRoleAdmin() {
+        MvcResult mvcResult = mvc.perform(get("/users").param("role", "admin"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<UserResponse> users = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+                });
+
+        assertThat(users)
+                .isNotEmpty()
+                .map(UserResponse::getRole).allMatch(role -> role.equals("admin"))
+                .hasSizeGreaterThanOrEqualTo(3);
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseOkWhenGetUsersByRoleUser() {
+        MvcResult mvcResult = mvc.perform(get("/users").param("role", "user"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<UserResponse> users = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+                });
+
+        assertThat(users)
+                .isNotEmpty()
+                .map(UserResponse::getRole).allMatch(s -> s.equals("user"))
+                .hasSizeGreaterThanOrEqualTo(17);
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseUserNotFoundWhenGetUserByIdButUserWithIdNotExists() {
+        MvcResult mvcResult = mvc.perform(get("/users/1000"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        ErrorResponse error = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), ErrorResponse.class);
+
+        assertThat(error)
+                .extracting("message").isEqualTo(List.of(ErrorDict.USER_ID_NOT_EXISTS));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseOkWhenGetUserById() {
+        MvcResult mvcResult = mvc.perform(get("/users/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserResponse response = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), UserResponse.class);
+
+        assertThat(response)
+                .extracting("id").isEqualTo(1L);
     }
 }

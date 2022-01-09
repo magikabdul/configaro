@@ -2,6 +2,7 @@ package cloud.cholewa.configaro.user.service;
 
 import cloud.cholewa.configaro.exception.UserException;
 import cloud.cholewa.configaro.exception.common.ErrorDict;
+import cloud.cholewa.configaro.exception.common.UserNotFoundException;
 import cloud.cholewa.configaro.user.dto.UserMapper;
 import cloud.cholewa.configaro.user.dto.UserRequest;
 import cloud.cholewa.configaro.user.dto.UserResponse;
@@ -16,8 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -117,5 +121,99 @@ class UserServiceImplTest {
                 .hasMessage(ErrorDict.USER_EMAIL_EXISTS);
 
         verify(userRepository, times(1)).findUserByEmail(EMAIL);
+    }
+
+    @Test
+    void shouldReturnEmptyListForGetAllUsers() {
+        when(userRepository.findAll()).thenReturn(new ArrayList<>());
+
+        int size = userService.getAllUsers().size();
+
+        verify(userRepository, times(1)).findAll();
+        verify(userMapper, times(0)).convertToUserResponse(any());
+
+        assertEquals(0, size);
+    }
+
+    @Test
+    void shouldReturnListWithOneUserWhenGetUserByRoleUser() {
+        String roleName = "user";
+        userEntity.setRoleEntity(roleUser);
+        List<UserEntity> users = List.of(userEntity);
+        userResponse = new UserResponse(1L, FIRST_NAME, LAST_NAME, EMAIL, roleName);
+
+        when(roleRepository.findRoleByName(roleName)).thenReturn(Optional.of(roleUser));
+        when(userRepository.findUserByRoleEntity_Name(roleName)).thenReturn(users);
+        when(userMapper.convertToUserResponse(userEntity)).thenReturn(userResponse);
+
+        int size = userService.getUsersByRole(roleName).size();
+
+        verify(userRepository, times(1)).findUserByRoleEntity_Name(roleName);
+        verify(userMapper, times(1)).convertToUserResponse(userEntity);
+
+        assertEquals(1, size);
+    }
+
+    @Test
+    void shouldReturnListWithOneUserWhenGetUserByRoleAdmin() {
+        String roleName = "admin";
+        userEntity.setRoleEntity(roleAdmin);
+        List<UserEntity> users = List.of(userEntity);
+        userResponse = new UserResponse(1L, FIRST_NAME, LAST_NAME, EMAIL, roleName);
+
+        when(roleRepository.findRoleByName(roleName)).thenReturn(Optional.of(roleAdmin));
+        when(userRepository.findUserByRoleEntity_Name(roleName)).thenReturn(users);
+        when(userMapper.convertToUserResponse(userEntity)).thenReturn(userResponse);
+
+        int size = userService.getUsersByRole(roleName).size();
+
+        verify(userRepository, times(1)).findUserByRoleEntity_Name(roleName);
+        verify(userMapper, times(1)).convertToUserResponse(userEntity);
+
+        assertEquals(1, size);
+    }
+
+    @Test
+    void shouldThrowUserNotFoundExceptionWhenGetUserByRoleWhenRoleNotExists() {
+        String roleName = "test";
+
+        when(roleRepository.findRoleByName(roleName)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.getUsersByRole(roleName))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage(ErrorDict.USER_ROLE_NOT_EXISTS);
+
+        verify(roleRepository, times(1)).findRoleByName(roleName);
+    }
+
+    @Test
+    void shouldThrowUserNotFoundWhenUsersIdNotExists() {
+        when(userRepository.findUserById(ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.getUsersById(ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage(ErrorDict.USER_ID_NOT_EXISTS);
+    }
+
+    @Test
+    void shouldResponseOkWhenUserIsFoundById() {
+        userResponse = UserResponse.builder()
+                .id(ID)
+                .firstname(FIRST_NAME)
+                .lastname(LAST_NAME)
+                .email(EMAIL)
+                .build();
+
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+        when(userMapper.convertToUserResponse(userEntity)).thenReturn(userResponse);
+
+        UserResponse userResponse = userService.getUsersById(ID);
+
+        assertThat(userResponse)
+                .isInstanceOf(UserResponse.class)
+                .extracting("id").isEqualTo(1L);
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(userMapper, times(1)).convertToUserResponse(userEntity);
     }
 }

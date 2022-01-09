@@ -11,4 +11,6 @@ public class ErrorDict {
     public static final String USER_PASSWORD_BLANK = "password must not be blank";
     public static final String USER_PASSWORD_LENGTH = "password length min size 8 chars";
     public static final String USER_ROLE_INVALID = "invalid role name";
+    public static final String USER_ID_NOT_EXISTS = "user with provided id not found";
+    public static final String USER_ROLE_NOT_EXISTS = "no users with this role";
 }

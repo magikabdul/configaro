@@ -216,4 +216,27 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).findUserById(ID);
         verify(userMapper, times(1)).convertToUserResponse(userEntity);
     }
+
+    @Test
+    void shouldNotDeleteAndThrowUserNotFoundWhenUsersIdNotExists() {
+        assertThatThrownBy(() ->userService.deleteUserById(ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage(ErrorDict.USER_ID_NOT_EXISTS);
+
+        verify(userRepository, times(1)).findUserById(ID);
+    }
+
+    @Test
+    void shouldDeleteUserWhenUsersIdExists() {
+        userResponse = UserResponse.builder()
+                .id(ID)
+                .build();
+
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+
+        userService.deleteUserById(ID);
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(userRepository, times(1)).deleteById(ID);
+    }
 }

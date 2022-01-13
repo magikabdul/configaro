@@ -44,6 +44,15 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUserById(Long userId) {
+        if (userRepository.findUserById(userId).isPresent()) {
+            userRepository.deleteById(userId);
+        } else {
+            throw new UserNotFoundException(ErrorDict.USER_ID_NOT_EXISTS);
+        }
+    }
+
+    @Override
     public UserResponse addUser(UserRequest userRequest) {
         if (userRepository.findUserByEmail(userRequest.email()).isEmpty()) {
             UserEntity newUserEntity = UserEntity.builder()

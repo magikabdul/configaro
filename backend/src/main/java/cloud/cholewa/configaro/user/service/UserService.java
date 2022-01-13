@@ -14,4 +14,6 @@ public interface UserService {
     List<UserResponse> getUsersByRole(String name);
 
     UserResponse getUsersById(Long id);
+
+    void deleteUserById(Long userId);
 }

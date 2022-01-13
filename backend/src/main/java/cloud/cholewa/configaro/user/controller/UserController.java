@@ -5,6 +5,7 @@ import cloud.cholewa.configaro.user.dto.UserResponse;
 import cloud.cholewa.configaro.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,5 +52,11 @@ public class UserController {
     public ResponseEntity<UserResponse> getUsersById(@PathVariable Long userId) {
         UserResponse user = userService.getUsersById(userId);
         return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -385,5 +386,28 @@ public class UserControllerITests extends BaseIntegrationTest {
 
         assertThat(response)
                 .extracting("id").isEqualTo(1L);
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseNotFoundWhenDeleteUserByIdWhenIdNotExists() {
+        MvcResult mvcResult = mvc.perform(delete("/users/1000"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        ErrorResponse response = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), ErrorResponse.class);
+
+        assertThat(response)
+                .extracting("message").isEqualTo(List.of(ErrorDict.USER_ID_NOT_EXISTS));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResponseNoContentWhenDeleteUserByIdWhenIdExists() {
+        mvc.perform(delete("/users/2"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 }

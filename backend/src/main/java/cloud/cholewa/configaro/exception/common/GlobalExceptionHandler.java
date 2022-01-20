@@ -1,6 +1,7 @@
 package cloud.cholewa.configaro.exception.common;
 
 import cloud.cholewa.configaro.exception.UserException;
+import cloud.cholewa.configaro.exception.UserNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;

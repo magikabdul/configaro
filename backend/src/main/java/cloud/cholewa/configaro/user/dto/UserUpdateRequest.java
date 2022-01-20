@@ -6,7 +6,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-public record UserRequest(
+public record UserUpdateRequest(
         @NotBlank(message = ErrorDict.USER_FIRSTNAME_BLANK)
         @Size(min = 3, message = ErrorDict.USER_FIRSTNAME_LENGTH)
         String firstname,
@@ -17,12 +17,6 @@ public record UserRequest(
 
         @NotBlank(message = ErrorDict.USER_EMAIL_BLANK)
         @Email(message = ErrorDict.USER_EMAIL_INVALID)
-        String email,
-
-        @NotBlank(message = ErrorDict.USER_PASSWORD_BLANK)
-        @Size(min = 8, message = ErrorDict.USER_PASSWORD_LENGTH)
-        String password,
-
-        String role
+        String email
 ) {
 }

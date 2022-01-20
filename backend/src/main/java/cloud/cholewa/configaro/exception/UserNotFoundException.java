@@ -1,4 +1,4 @@
-package cloud.cholewa.configaro.exception.common;
+package cloud.cholewa.configaro.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

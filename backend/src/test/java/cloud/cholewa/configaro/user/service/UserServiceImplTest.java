@@ -1,11 +1,12 @@
 package cloud.cholewa.configaro.user.service;
 
 import cloud.cholewa.configaro.exception.UserException;
+import cloud.cholewa.configaro.exception.UserNotFoundException;
 import cloud.cholewa.configaro.exception.common.ErrorDict;
-import cloud.cholewa.configaro.exception.common.UserNotFoundException;
 import cloud.cholewa.configaro.user.dto.UserMapper;
 import cloud.cholewa.configaro.user.dto.UserRequest;
 import cloud.cholewa.configaro.user.dto.UserResponse;
+import cloud.cholewa.configaro.user.dto.UserUpdateRequest;
 import cloud.cholewa.configaro.user.model.RoleEntity;
 import cloud.cholewa.configaro.user.model.UserEntity;
 import cloud.cholewa.configaro.user.repository.RoleRepository;
@@ -38,6 +39,7 @@ class UserServiceImplTest {
     private final String LAST_NAME = "Doe";
     private final String EMAIL = "john.doe@example.com";
     private final String PASSWORD = "12345678";
+    private final String NEW_PASSWORD = "87654321";
 
     @Mock
     private UserRepository userRepository;
@@ -54,6 +56,7 @@ class UserServiceImplTest {
     private static UserEntity userEntity;
     private static UserResponse userResponse;
     private static UserRequest userRequest;
+    private static UserUpdateRequest userUpdateRequest;
     private static final RoleEntity roleAdmin = new RoleEntity(1L, "admin");
     private static final RoleEntity roleUser = new RoleEntity(2L, "user");
 
@@ -219,7 +222,7 @@ class UserServiceImplTest {
 
     @Test
     void shouldNotDeleteAndThrowUserNotFoundWhenUsersIdNotExists() {
-        assertThatThrownBy(() ->userService.deleteUserById(ID))
+        assertThatThrownBy(() -> userService.deleteUserById(ID))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage(ErrorDict.USER_ID_NOT_EXISTS);
 
@@ -237,6 +240,159 @@ class UserServiceImplTest {
         userService.deleteUserById(ID);
 
         verify(userRepository, times(1)).findUserById(ID);
-        verify(userRepository, times(1)).deleteById(ID);
+        verify(userRepository, times(1)).delete(userEntity);
+    }
+
+    @Test
+    void shouldNotUpdateUserAndThrowUserNotFoundWhenUserIdNotExists() {
+        userUpdateRequest = new UserUpdateRequest(FIRST_NAME, LAST_NAME, EMAIL);
+
+        assertThatThrownBy(() -> userService.updateUser(ID, userUpdateRequest))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage(ErrorDict.USER_ID_NOT_EXISTS);
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(userMapper, times(0)).convertToUserResponse(any());
+        verify(userRepository, times(0)).save(any());
+    }
+
+    @Test
+    void shouldUpdateUserWhenUserIdExists() {
+        userUpdateRequest = new UserUpdateRequest(FIRST_NAME, LAST_NAME, EMAIL);
+
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+        when(userMapper.convertToUserResponse(userEntity)).thenReturn(userResponse);
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
+
+        userService.updateUser(ID, userUpdateRequest);
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(userMapper, times(1)).convertToUserResponse(userEntity);
+        verify(userRepository, times(1)).save(userEntity);
+    }
+
+    @Test
+    void shouldNotUpdateUserPasswordWhenUserIdNotExists() {
+        assertThatThrownBy(() -> userService.updateUserPassword(ID, PASSWORD, NEW_PASSWORD))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage(ErrorDict.USER_ID_NOT_EXISTS);
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(userRepository, times(0)).save(any());
+    }
+
+    @Test
+    void shouldNotUpdateUserPasswordWhenPasswordsDoesntMatch() {
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+
+        assertThatThrownBy(() -> userService.updateUserPassword(ID, NEW_PASSWORD, NEW_PASSWORD))
+                .isInstanceOf(UserException.class)
+                .hasMessage(ErrorDict.USER_PASSWORD_UPDATE_ERROR);
+
+        verify(userRepository, times(1)).findUserById(ID);
+    }
+
+    @Test
+    void shouldNotUpdateUserPasswordWhenNewPasswordTooShort() {
+        String TOO_SHORT_PASS = "1234567";
+
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+
+        assertThatThrownBy(() -> userService.updateUserPassword(ID, PASSWORD, TOO_SHORT_PASS))
+                .isInstanceOf(UserException.class)
+                .hasMessage(ErrorDict.USER_PASSWORD_LENGTH);
+
+        verify(userRepository, times(1)).findUserById(ID);
+    }
+
+    @Test
+    void shouldUpdateUserPassword() {
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
+
+        userService.updateUserPassword(ID, PASSWORD, NEW_PASSWORD);
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(userRepository, times(1)).save(userEntity);
+    }
+
+    @Test
+    void shouldNotUpdateUserRoleWhenUserIdNotExists() {
+        assertThatThrownBy(() -> userService.updateUserRole(ID, roleAdmin.getName()))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage(ErrorDict.USER_ID_NOT_EXISTS);
+
+        verify(userRepository, times(1)).findUserById(ID);
+    }
+
+    @Test
+    void shouldUpdateUserRoleWhenNewRoleIsAdmin() {
+        String newRoleAdmin = "admin";
+
+        userResponse = UserResponse.builder()
+                .role(roleAdmin.getName())
+                .build();
+
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+        when(roleRepository.findRoleByName(newRoleAdmin)).thenReturn(Optional.of(roleAdmin));
+        when(userMapper.convertToUserResponse(userEntity)).thenReturn(userResponse);
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
+
+        UserResponse response = userService.updateUserRole(ID, newRoleAdmin);
+
+        assertEquals(newRoleAdmin, response.getRole());
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(roleRepository, times(1)).findRoleByName(newRoleAdmin);
+        verify(userMapper, times(1)).convertToUserResponse(userEntity);
+        verify(userRepository, times(1)).save(userEntity);
+    }
+
+    @Test
+    void shouldUpdateUserRoleWhenNewRoleIsUser() {
+        String newRoleUser = "user";
+
+        userResponse = UserResponse.builder()
+                .role(roleUser.getName())
+                .build();
+
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+        when(roleRepository.findRoleByName(newRoleUser)).thenReturn(Optional.of(roleAdmin));
+        when(userMapper.convertToUserResponse(userEntity)).thenReturn(userResponse);
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
+
+        UserResponse response = userService.updateUserRole(ID, newRoleUser);
+
+        assertEquals(newRoleUser, response.getRole());
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(roleRepository, times(1)).findRoleByName(newRoleUser);
+        verify(userMapper, times(1)).convertToUserResponse(userEntity);
+        verify(userRepository, times(1)).save(userEntity);
+    }
+
+    @Test
+    void shouldUpdateUserRoleWhenNewRoleIsAny() {
+        String newRoleAny = "er";
+
+        userResponse = UserResponse.builder()
+                .role(roleUser.getName())
+                .build();
+
+        when(userRepository.findUserById(ID)).thenReturn(Optional.of(userEntity));
+        when(roleRepository.findRoleByName(newRoleAny)).thenReturn(Optional.empty());
+        when(roleRepository.findRoleByName(roleUser.getName())).thenReturn(Optional.of(roleUser));
+        when(userMapper.convertToUserResponse(userEntity)).thenReturn(userResponse);
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
+
+        UserResponse response = userService.updateUserRole(ID, newRoleAny);
+
+        assertEquals(roleUser.getName(), response.getRole());
+
+        verify(userRepository, times(1)).findUserById(ID);
+        verify(roleRepository, times(1)).findRoleByName(newRoleAny);
+        verify(roleRepository, times(1)).findRoleByName(roleUser.getName());
+        verify(userMapper, times(1)).convertToUserResponse(userEntity);
+        verify(userRepository, times(1)).save(userEntity);
     }
 }
